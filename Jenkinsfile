@@ -42,6 +42,13 @@ pipeline {
             }
         }
 
+        stage('Debug Workspace') {
+            steps {
+                sh 'pwd'
+                sh 'ls -la'
+            }
+        }
+
         stage('Docker Build') {
             steps {
                 script{
