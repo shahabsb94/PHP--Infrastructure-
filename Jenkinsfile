@@ -22,15 +22,15 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                sh '''
-                docker build -t $IMAGE_NAME .
-                '''
-            }
-        }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         sh '''
+        //         docker build -t $IMAGE_NAME .
+        //         '''
+        //     }
+        // }
 
-        stage('Docker Builds ') {
+        stage('Docker Login & Build & Image Push to ECR ') {
             steps {
                 script{
                     withAWS(region: 'us-east-1', credentials: 'aws-creds') {
