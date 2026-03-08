@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        // stage('Clone Repository') {
-        //     steps {
-        //         git 'https://github.com/shahabsb94/PHP--Infrastructure-.git'
-        //     }
-        // }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t php-devops-app .'
