@@ -51,7 +51,7 @@ pipeline {
         stage('Deploy Container') {
             steps {
                 sh '''
-                docker rm -f $CONTAINER || true
+                docker rm -f $CONTAINER_NAME || true
                 docker run -d -p 8082:80 --name $CONTAINER_NAME $REGISTRY/$IMAGE_NAME:latest
                 docker ps
                 '''
