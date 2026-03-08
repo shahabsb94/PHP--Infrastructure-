@@ -16,11 +16,11 @@ pipeline {
             }
         }
 
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/shahabsb94/PHP--Infrastructure-.git'
-            }
-        }
+        // stage('Checkout Code') {
+        //     steps {
+        //         git branch: 'main', url: 'https://github.com/shahabsb94/PHP--Infrastructure-.git'
+        //     }
+        // }
 
         // stage('Build Docker Image') {
         //     steps {
@@ -30,15 +30,35 @@ pipeline {
         //     }
         // }
 
-        stage('Docker Login & Build & Image Push to ECR ') {
+        stage('Docker Login') {
             steps {
                 script{
                     withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                         sh """
                             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
+                        """
+                    }
+                }
+            }
+        }
 
+        stage('Docker Build') {
+            steps {
+                script{
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                        sh """
                             docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_NAME}:latest .
+                        """
+                    }
+                }
+            }
+        }
 
+        stage('Docker Image Push to ECR ') {
+            steps {
+                script{
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                        sh """
                             docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_NAME}:latest
 
                         """
