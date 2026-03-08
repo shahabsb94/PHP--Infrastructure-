@@ -2,19 +2,13 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "php-devops-app"
-        CONTAINER_NAME = "php-container"
-        PORT = "8082"
-        ACC_ID = '180935779261'
+        REGISTRY = "180935779261.dkr.ecr.us-east-1.amazonaws.com"
+        IMAGE = "php-devops-app"
+        CONTAINER = "php-container"
+        AWS_REGION = "us-east-1"
     }
 
     stages {
-
-        stage('Clean Workspace') {
-            steps {
-                cleanWs()
-            }
-        }
 
         // stage('Checkout Code') {
         //     steps {
@@ -22,62 +16,27 @@ pipeline {
         //     }
         // }
 
-        // stage('Build Docker Image') {
-        //     steps {
-        //         sh '''
-        //         docker build -t $IMAGE_NAME .
-        //         '''
-        //     }
-        // }
-
         stage('Docker Login') {
             steps {
-                script{
-                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                        sh """
-                            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
-                        """
-                    }
-                }
-            }
-        }
-
-        stage('Debug Workspace') {
-            steps {
-                sh 'pwd'
-                sh 'ls -la'
+                sh '''
+                aws ecr get-login-password --region $AWS_REGION \
+                | docker login --username AWS --password-stdin $REGISTRY
+                '''
             }
         }
 
         stage('Docker Build') {
             steps {
-                script{
-                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                        sh """
-                            docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_NAME}:latest .
-                        """
-                    }
-                }
+                sh '''
+                docker build -t $REGISTRY/$IMAGE:latest .
+                '''
             }
         }
 
-        stage('Docker Image Push to ECR ') {
-            steps {
-                script{
-                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                        sh """
-                            docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_NAME}:latest
-
-                        """
-                    }
-                }
-            }
-        }
-
-        stage('Stop Old Container') {
+        stage('Push Image to ECR') {
             steps {
                 sh '''
-                docker rm -f $CONTAINER_NAME || true
+                docker push $REGISTRY/$IMAGE:latest
                 '''
             }
         }
@@ -85,18 +44,18 @@ pipeline {
         stage('Deploy Container') {
             steps {
                 sh '''
-                docker run -d -p $PORT:80 --name $CONTAINER_NAME $IMAGE_NAME
+                docker rm -f $CONTAINER || true
+                docker run -d -p 8082:80 --name $CONTAINER $REGISTRY/$IMAGE:latest
                 '''
             }
         }
 
-        stage('Verify Deployment') {
+        stage('Clean Workspace') {
             steps {
-                sh '''
-                docker ps
-                '''
+                cleanWs()
             }
         }
+
     }
 
     post {
