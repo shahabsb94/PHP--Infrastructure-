@@ -29,7 +29,7 @@ pipeline {
                 script{
                     withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                         sh """
-                            docker build -t $REGISTRY/$IMAGE:latest .
+                            docker build -t $REGISTRY/$IMAGE_NAME:latest .
                         """
                     }
                 }
@@ -41,7 +41,7 @@ pipeline {
                 script{
                     withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                         sh """
-                            docker push $REGISTRY/$IMAGE:latest
+                            docker push $REGISTRY/$IMAGE_NAME:latest
                         """
                     }
                 }
@@ -52,7 +52,7 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f $CONTAINER || true
-                docker run -d -p 8082:80 --name $CONTAINER $REGISTRY/$IMAGE:latest
+                docker run -d -p 8082:80 --name $CONTAINER_NAME $REGISTRY/$IMAGE_NAME:latest
                 docker ps
                 '''
             }
