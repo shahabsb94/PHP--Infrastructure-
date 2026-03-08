@@ -48,3 +48,28 @@ yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-co
 systemctl start docker
 systemctl enable docker
 usermod -aG docker ec2-user
+
+# install java & Jenkins
+
+curl -fsSL https://pkg.jenkins.io/redhat-stable/jenkins.repo | sudo tee /etc/yum.repos.d/jenkins.repo
+
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+sudo dnf install -y java-17-openjdk fontconfig
+
+sudo dnf clean all
+sudo dnf makecache
+
+sudo dnf install -y jenkins
+
+sudo systemctl daemon-reexec
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+
+sudo systemctl status jenkins
+
+# sudo nano /usr/lib/systemd/system/jenkins.service ---> if we want to change Jenkins port form 8080 -8081
+# sudo dnf install nano -y
+# change Environment="JENKINS_PORT=8081"
+
+# cat /var/lib/jenkins/secrets/initialAdminPassword
