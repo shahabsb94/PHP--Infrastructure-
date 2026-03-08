@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    environment {
+        REGISTRY = "180935779261.dkr.ecr.us-east-1.amazonaws.com"
+        IMAGE = "php-devops-app"
+        CONTAINER = "php-container"
+        AWS_REGION = "us-east-1"
+    }
+
+    stages {
+
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/shahabsb94/PHP--Infrastructure-.git'
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                sh '''
+                aws ecr get-login-password --region $AWS_REGION \
+                | docker login --username AWS --password-stdin $REGISTRY
+                '''
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh '''
+                docker build -t $REGISTRY/$IMAGE:latest .
+                '''
+            }
+        }
+
+        stage('Push Image to ECR') {
+            steps {
+                sh '''
+                docker push $REGISTRY/$IMAGE:latest
+                '''
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                sh '''
+                docker rm -f $CONTAINER || true
+                docker run -d -p 8082:80 --name $CONTAINER $REGISTRY/$IMAGE:latest
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment successful 🚀"
+        }
+        failure {
+            echo "Pipeline failed ❌"
+        }
+    }
+}
