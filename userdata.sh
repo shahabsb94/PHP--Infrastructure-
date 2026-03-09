@@ -83,6 +83,9 @@ sudo systemctl status jenkins
 # sudo dnf install nano -y
 # sudo nano /usr/lib/systemd/system/jenkins.service ---> if we want to change Jenkins port form 8080 -8081
 # change Environment="JENKINS_PORT=8081"
+# sudo systemctl daemon-reload
+# sudo systemctl restart jenkins
+# sudo netstat -tulpn | grep 8081
 
 # cat /var/lib/jenkins/secrets/initialAdminPassword
 
