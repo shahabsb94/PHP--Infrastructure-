@@ -107,8 +107,11 @@ sudo mv kubectl /usr/local/bin/
 kubectl version --client
 
 # Step 1 — Install Minikube
-# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-# sudo install minikube-linux-amd64 /usr/local/bin/minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
 # minikube version
+minikube version
+
+# Start Minikube -- Because we are already using Docker, we will use the Docker driver.
 

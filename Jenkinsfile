@@ -48,7 +48,14 @@ pipeline {
             }
         }
 
-        stage('Deploy Container') {
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl apply -f k8s/service.yaml'
+            }
+        }
+
+        /* stage('Deploy Container') {
             steps {
                 sh '''
                 docker rm -f $CONTAINER_NAME || true
@@ -56,7 +63,7 @@ pipeline {
                 docker ps
                 '''
             }
-        }
+        } */
 
         stage('Clean Workspace') {
             steps {
