@@ -77,6 +77,8 @@ sudo systemctl daemon-reexec
 sudo systemctl enable jenkins
 sudo systemctl start jenkins
 
+sudo usermod -aG docker jenkins
+
 sudo systemctl status jenkins
 
 
