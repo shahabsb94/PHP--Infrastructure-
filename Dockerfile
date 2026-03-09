@@ -1,6 +1,10 @@
 # Use official PHP Apache image
 FROM php:8.2-apache
 
+# Install Redis extension
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
 # Set working directory
 WORKDIR /var/www/html
 
