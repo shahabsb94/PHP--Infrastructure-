@@ -12,6 +12,12 @@ pipeline {
 
     stages {
 
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/shahabsb94/PHP--Infrastructure-.git'
+            }   
+        }
+
         stage('Docker Login') {
             steps {
                 script{
@@ -51,15 +57,19 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
+                sh 'kubectl apply -f redis-deployment.yaml --validate=false'
+                sh 'kubectl apply -f redis-service.yaml --validate=false'
+
                 sh 'kubectl apply -f deployment.yaml --validate=false'
                 sh 'kubectl apply -f service.yaml --validate=false'
+
                 sh 'kubectl apply -f hpa.yaml --validate=false'
 
                 sh """
-                    kubectl set image deployment/php-devops-app \
-                    php-container=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-                    """
-                    echo "$IMAGE_TAG"
+                kubectl set image deployment/php-devops-app \
+                php-container=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+                """
+                echo "Deploying image version: ${IMAGE_TAG}"
                 }
         }
 
@@ -72,6 +82,12 @@ pipeline {
                 '''
             }
         } */
+
+        stage('Cleanup Docker Images') {
+            steps {
+                sh 'docker image prune -af || true'
+            }
+        }
 
         stage('Clean Workspace') {
             steps {
