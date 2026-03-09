@@ -17,6 +17,7 @@ spec:
       containers:
       - name: php-container
         image: 180935779261.dkr.ecr.us-east-1.amazonaws.com/php-devops-app:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
 ---
