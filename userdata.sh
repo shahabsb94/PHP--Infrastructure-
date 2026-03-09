@@ -115,3 +115,13 @@ minikube version
 
 # Start Minikube -- Because we are already using Docker, we will use the Docker driver.
 
+# Login Docker to ECR
+aws ecr get-login-password --region us-east-1 \
+| docker login --username AWS \
+--password-stdin 180935779261.dkr.ecr.us-east-1.amazonaws.com
+
+# Create Kubernetes Secret for ECR
+kubectl create secret docker-registry ecr-secret \
+--docker-server=180935779261.dkr.ecr.us-east-1.amazonaws.com \
+--docker-username=AWS \
+--docker-password=$(aws ecr get-login-password --region us-east-1)

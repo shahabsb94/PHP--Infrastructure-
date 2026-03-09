@@ -12,8 +12,10 @@ spec:
       labels:
         app: php-devops
     spec:
+      imagePullSecrets:
+      - name: ecr-secret
       containers:
-      - name: php-devops-container
+      - name: php-container
         image: 180935779261.dkr.ecr.us-east-1.amazonaws.com/php-devops-app:latest
         ports:
         - containerPort: 80
