@@ -53,6 +53,7 @@ pipeline {
             steps {
                 sh 'kubectl apply -f deployment.yaml --validate=false'
                 sh 'kubectl apply -f service.yaml --validate=false'
+                sh 'kubectl apply -f hpa.yaml --validate=false'
 
                 sh """
                     kubectl set image deployment/php-devops-app \
