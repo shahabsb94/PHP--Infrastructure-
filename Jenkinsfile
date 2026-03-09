@@ -14,7 +14,8 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/shahabsb94/PHP--Infrastructure-.git'
+                git branch: 'main',
+                url: 'https://github.com/shahabsb94/PHP--Infrastructure-.git'
             }   
         }
 
