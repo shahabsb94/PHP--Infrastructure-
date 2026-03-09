@@ -7,6 +7,7 @@ pipeline {
         CONTAINER_NAME = "php-container"
         PORT = "8082"
         AWS_REGION = "us-east-1"
+        IMAGE_TAG = "build-${BUILD_NUMBER}"
     }
 
     stages {
@@ -24,24 +25,24 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Docker Build Image') {
             steps {
                 script{
                     withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                         sh """
-                            docker build -t $REGISTRY/$IMAGE_NAME:latest .
+                            docker build -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
                         """
                     }
                 }
             }
         }
 
-        stage('Docker Image Push to ECR ') {
+        stage('Docker Push Image to ECR ') {
             steps {
                 script{
                     withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                         sh """
-                            docker push $REGISTRY/$IMAGE_NAME:latest
+                            docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
                         """
                     }
                 }
